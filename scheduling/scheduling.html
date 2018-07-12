@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scheduling</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="scheduling.css">
+</head>
+<body>
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-secondary btn-success" id="startSimulation">
+                                <span class="glyphicon glyphicon-play"></span> Run
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="pauseSimulation">
+                                <span class="glyphicon glyphicon-pause"></span> Pause
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-danger" id="stopSimulation">
+                                <span class="glyphicon glyphicon-stop"></span> Stop
+                            </button>
+                        </div>
+                    </li>
+                    <li>
+                        <select title="Scheduling Algorithm" id="schedulingAlgorithm">
+                            <option>First in, first out</option>
+                            <option>Last in, first out</option>
+                            <option>Round-robin</option>
+                            <option>Priority</option>
+                            <option>Shortest job next</option>
+                            <option>Shortest remaining time next</option>
+                            <option>Highest response ratio next</option>
+                        </select>
+                    </li>
+                    <li id="interruptCheckBoxContainer" style="display:none;">
+                        <input id="interruptCheckBox" type="checkbox" title="Should new processes interrupt running ones?"/>
+                        <label for="interruptCheckBox">&nbsp;Pre-emption&nbsp;/&nbsp;interruption</label>
+                    </li>
+                    <li id="rrQuantumContainer" style="display:none;">
+                        <label class="control-label" for="quantum">quantum:&nbsp;</label>
+                        <input type="number" class="form-control" id="quantum" value="2" min="1">
+                    </li>
+                    <li>
+                        <label>
+                            Animation&nbsp;speed&nbsp;
+                        </label>
+                        <input type="range" min="0" max="100" step="1" title="Animation speed" id="animationSpeed"/>
+                    </li>
+                    <li>
+                        <button type="button" class="btn" id="addRandomProcesses">
+                            <span class="glyphicon glyphicon-random"></span>&nbsp; Random processes
+                        </button>
+                    </li>
+
+                    <li>
+                        <input type="checkbox" id="enableGanttGraph" style="margin-bottom: 6px"/>
+                        <label for="enableGanttGraph">&nbsp;Enable Gantt-Graph</label>
+                    </li>
+
+                   <!-- <li>
+                        <button type="button" class="btn" id="saveButton">
+                            <span class="glyphicon glyphicon-floppy-save"></span>&nbsp; Save configuration
+                        </button>
+                    </li>-->
+                    <!--<li>
+                        <label class="btn" for="inputID">
+                            <input id="inputID" type="file" style="position: fixed; top: -100em; border: solid 1px red;" size="200";>
+
+                            <button type="button" class="btn" id="loadButton" for="inputID">
+                                <span class="glyphicon glyphicon-floppy-open" for="inputID"></span>&nbsp; Load configuration
+                            </button>
+                        </label>
+
+                    </li> -->
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row" style="margin-top: 25px">
+            <div class="col-md-6 col-sm-6">
+                <div class="process-side">
+                    <div class="fixed-top">
+                        <button type="button" class="btn btn-primary btn-block add-process-button" id="openProcessFormBtn">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                            <span class="glyphicon glyphicon-minus hidden" aria-hidden="true"></span>
+                        </button>
+                        <form class="form-horizontal process-form hidden" id="processForm">
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="arrival">Arrival:</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="arrival" value="0" min="0" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="duration">Length:</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="duration" value="10" min="1" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="priority">Priority:</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control" id="priority" value="1" min="1" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="submit" class="btn btn-default">Add process</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="process-list-container" id="processList">
+                        <div class="list-group" id="simulatedProcesses">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-sm-6">
+                <ul id="statsList">
+                </ul>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 25px">
+            <div class="col-md-12">
+                <svg class="ganttSvg" id="gantt" style="display: none">
+                </svg>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 25px">
+            <div class="col-md-12">
+                <svg class="stats-svg" id="stats">
+                </svg>
+            </div>
+        </div>
+    </div>
+    <script src="bundle.js"></script>
+</body>
+</html>
