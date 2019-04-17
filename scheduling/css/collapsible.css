@@ -1,0 +1,60 @@
+.uncollapsible {
+    background-color: #cccccc;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    text-decoration: underline dotted black;
+    outline: none;
+    font-size: 15px;
+    border: 1pt solid grey;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin-top: 4px;
+}
+
+.collapsible{
+    background-color: #cccccc;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    outline: none;
+    font-size: 15px;
+    border: 1pt solid grey;
+    margin-top: 4px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.active, .collapsible:hover {
+    background-color: #ccc;
+}
+
+.content {
+    display: none;
+    overflow: hidden;
+    background-color: #85b9db;
+    border-left: 1pt solid grey;
+    border-right: 1pt solid grey;
+    border-bottom: 1pt solid grey;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 0 18px 5px;
+
+}
+
+.collapsible:after {
+    width: 15px;
+    height: 15px;
+    content: "\254B";
+    font-size: 10px;
+    float: right;
+    color: white;
+  }
+
+.active:after {
+    content: '\2501';
+}

@@ -1,0 +1,15 @@
+/*
+ * Created by Clemens Gläser on 26.03.18 13:06
+ */
+
+.pad-top {
+    margin-top: 25px;
+}
+
+.categories {
+    list-style-type: none;
+}
+
+.categories > li {
+    padding-top: 25px;
+}

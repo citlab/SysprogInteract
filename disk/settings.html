@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--
+  ~ Created by Clemens Gläser on 26.03.18 12:32
+  -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="settings.css">
+</head>
+<body>
+<!-- Nav Bar -->
+<!-- Page content -->
+<div class="container">
+    <div class="row pad-top">
+        <div class="col-md-6 col-sm-6">
+            <label for="btnBack">Settings&nbsp;</label>
+            <button type="button" class="btn btn-default" id="btnBack">
+                <span class="glyphicon glyphicon-menu-left"></span>&nbsp;Back
+            </button>
+        </div>
+    </div>
+
+    <div class="row pad-top">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-sm-3">
+            <ul class="categories">
+                <li>
+                    <button type="button" class="btn btn-default active" id="btnCatGeneral">
+                        <span class="glyphicon glyphicon-menu-right"></span>&nbsp;General
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-default" id="btnCatMemory">
+                        <span class="glyphicon glyphicon-menu-right"></span>&nbsp;Memory
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-default" id="btnCatDisk">
+                        <span class="glyphicon glyphicon-menu-right"></span>&nbsp;Disk
+                    </button>
+                </li>
+                <li>
+                    <button type="button" class="btn btn-default" id="btnCatVisuals">
+                        <span class="glyphicon glyphicon-menu-right"></span>&nbsp;Visuals
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <!-- Content -->
+        <div class="col-md-9 col-sm-3">
+            <div class="container-settings" id="optsGeneral">
+                <div>
+                    Welcome to the settings! Please choose a category on the left!
+                </div>
+
+                <div class="col-offset-2 pad-top">
+                    <button class="btn btn-danger" id="btnRestoreDefaults">Restore Defaults</button>
+                </div>
+
+                <form class="form-horizontal hidden" id="formGeneral">
+                    <div class="form-group">
+                        <label for="generalTest" class="control-label col-sm-2">Test (General)</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="generalTest">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="container-settings hidden" id="optsMemory">
+                Less used options related to the behaviour of Memory used in the simulation.
+                <form class="form-horizontal" id="formMemory">
+                    <div class="form-group">
+                        <label for="memoryEnabled" class="control-label col-sm-2">Memory enabled</label>
+                        <div class="col-sm-1">
+                            <input type="checkbox" class="form-control" id="memoryEnabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="swappingEnabled" class="control-label col-sm-2">Swapping enabled</label>
+                        <div class="col-sm-1">
+                            <input type="checkbox" class="form-control" id="swappingEnabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="memorySize" class="control-label col-sm-2">Memory size</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="memorySize">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="container-settings hidden" id="optsDisk">
+                Less used options related to the behaviour of the disk used in the simulation.
+                <form class="form-horizontal" id="formDisk">
+                    <div class="form-group">
+                        <label for="diskEnabled" class="control-label col-sm-2">Disk enabled</label>
+                        <div class="col-sm-1">
+                            <input type="checkbox" class="form-control" id="diskEnabled">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="diskSize" class="control-label col-sm-2">Disk size</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="diskSize" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="diskSizePerBlock" class="control-label col-sm-2">Disk size per block</label>
+                        <div class="col-sm-8">
+                            <input type="number" id="diskSizePerBlock" min="1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="container-settings hidden" id="optsVisuals">
+                Options related to the visual representation.
+                <form class="form-horizontal" id="formVisuals">
+                    <div class="form-group">
+                        <label for="visualsDiskSpaceAnimator" class="control-label col-sm-2">Used Disk Space
+                            Animator</label>
+                        <div class="col-sm-8">
+                            <select id="visualsDiskSpaceAnimator">
+                                <!-- See ./localStorage/LocalStorage.ts for values -->
+                                <option value="diskSpaceAnimators--fixedSegments">Fixed Segments Donut Chart</option>
+                                <option value="diskSpaceAnimators--diskUsage">Disk Usage Chart</option>
+                                <option value="diskSpaceAnimators--oldPie">Legacy Pie Chart</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="settings.bundle.js"></script>
+</body>
+</html>

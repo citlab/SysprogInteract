@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scheduling</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/scheduling.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+    <link rel="stylesheet" href="css/switch.css">
+    <link rel="stylesheet" href="css/collapsible.css">
+    <link rel="stylesheet" href="css/queues.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+<body>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+     <!-- Bootstrap Js CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- D3 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav" id="menu">
+                    <li>
+                        <!-- Sidebar Button -->
+                        <div id="content">
+                            <button type="button" id="sidebarCollapse" class="btn btn-info">
+                                <i class="glyphicon glyphicon-align-left"></i>
+                                Options
+                            </button>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-secondary btn-success" id="startSimulation">
+                                <span class="glyphicon glyphicon-play"></span> Run
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="pauseSimulation">
+                                <span class="glyphicon glyphicon-pause"></span> Pause
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-danger" id="stopSimulation">
+                                <span class="glyphicon glyphicon-stop"></span> Stop
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-info" id="stepByStep">+1
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav class="col-md-2" id="sidebar">
+            <!-- Sidebar content -->
+            <div class="sidebar-topic-container">
+                <!-- GENERAL -->
+                <button class="uncollapsible">
+                    <u>General</u>
+                </button>
+                <div class="content" style="display: block">
+                    <div class="col-md-12">
+                        <label class="sidebarLabel" for="animationSpeed">Animation&nbsp;speed&nbsp;:</label>
+                        <input type="range" min="0" max="100" step="1" title="Animation speed" id="animationSpeed"/>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-sidebar col-md-12" id="addRandomProcesses">
+                            <span class="glyphicon glyphicon-random"></span>&nbsp; Random Processes
+                        </button>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-sidebar col-md-12" id="loadButton">
+                            <i class="glyphicon glyphicon-floppy-open"></i>&nbsp;
+                            Load Configuration
+                        </button>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-sidebar col-md-12" id="saveButton">
+                            <i class="glyphicon glyphicon-floppy-save"></i>&nbsp;
+                            Save Configuration
+                        </button>
+                    </div>
+                </div>
+                <!-- CPU -->
+                <button class="uncollapsible" style="cursor: not-allowed">CPU</button>
+                <div class="content" style="display: block">
+                    <div class="col-md-12">
+                        <label class="sidebarLabel" for="schedulingAlgorithm">algorithm:</label>
+                        <select title="Scheduling Algorithm" id="schedulingAlgorithm" style="width: 100%">
+                            <option>First in, First out</option>
+                            <option>Last in, First out</option>
+                            <option>Round Robin</option>
+                            <option>Priority</option>
+                            <option>Shortest Job Next</option>
+                            <option>Shortest Remaining Time Next</option>
+                            <option>Highest Response Ratio Next</option>
+                        </select>
+                    </div>
+                    <div class="col-md-12" id="interruptCheckBoxContainer" style="display:none;">
+                        <label class="sidebarLabel" for="interruptCheckBox">
+                            Pre-emption/Interruption:&nbsp;
+                        </label>
+                        <input id="interruptCheckBox" type="checkbox" title="Should new processes interrupt running ones?"/>
+                    </div>
+                    <div class="col-md-12" id="rrQuantumContainer" style="display:none;">
+                        <label class="sidebarLabel" for="quantum">quantum:</label>
+                        <input type="number" class="form-control" id="quantum" value="2" min="1" style="height: fit-content;">
+                    </div>
+                    <div class="col-md-12">
+                        <label class="sidebarLabel" style="display: inline-block; text-align: left;">
+                            Enable gantt-graph: &nbsp;
+                        </label>
+                        <label class="switch">
+                            <input id="enableGanttGraph" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+                <!-- MEMORY -->
+                <button class="collapsible" id="memorySwitch">Memory Simulation</button>
+                <div class="content">
+                    <div class="col-md-12">
+                        <label class="sidebarLabel" for="memoryAlgorithm">algorithm:</label>
+                        <select title="Memory Algorithm" id="memoryAlgorithm" style="width: 100%;">
+                            <option>First Fit</option>
+                            <option>Best Fit</option>
+                            <option>Worst Fit</option>
+                            <option>Rotating First Fit</option>
+                        </select>
+                    </div>
+                    <form class="col-md-12">
+                        <label class="sidebarLabel" for="memSizeControl">Memory-Size:</label>
+                        <output id="outputMemSize" name="amountOutput" for="memSizeControl" onload="this.value = 1024" ></output>
+                        <input type="range" id="memSizeControl" name="amountRange" min="128" max="2048" value="1024" step="128"  oninput="this.form.amountOutput.value=this.value" />
+                    </form>
+                </div>
+                <!-- RESOURCE MANAGEMENT
+                <button class="collapsible" id="resourceSwitch">Resource Management</button>
+                <div class="content">
+                    <div class="col-md-12">
+                        <label class="sidebarLabel" for="resourceAlgorithm">algorithm:</label>
+                        <select title="Resource Algorithm" id="resourceAlgorithm" style="width: 100%">
+                            <option>First in, First out</option>
+                            <option>First Fit</option>
+                            <option>Best Fit</option>
+                        </select>
+                    </div>
+                </div>-->
+            </div>
+        </nav>
+        <!-- Page Content -->
+        <div class="container">
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-6 col-sm-6">
+                    <div class="process-side">
+                        <div class="fixed-top">
+                            <button type="button" class="btn btn-primary btn-block add-process-button" id="openProcessFormBtn">
+                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-minus hidden" aria-hidden="true"></span>
+                            </button>
+                            <form class="form-horizontal process-form hidden" id="processForm">
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="arrival">Arrival:</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" id="arrival" value="0" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="duration">Duration:</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" id="duration" value="10" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2" for="priority">Priority:</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" id="priority" value="1" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="secondLastForm">
+                                    <label class="control-label col-sm-2" for="memoryUsage">Memory:</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control" id="memoryUsage" value="1" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="form-group" id="btn-form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button type="submit" class="btn btn-default">Add Process</button>
+                                        <button type="button" class="btn btn-default" id="eventBtn" style="display: none">Add Event</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="process-list-container" id="processList">
+                            <span class="glyphicon icon-cpu-processor"></span>
+                            <div class="list-group" id="simulatedProcesses">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="resourceQueueContainer col-sm-3" id="resourceQueueContainer" style="display: none;">
+                    <div align="center" style="height: 20px">Ram Queue</div>
+                    <div class="list-group memoryQueue" id="memoryQueue"></div>
+                </div>
+                <div class="exclusiveQueueContainer col-sm-3" id="exclusiveQueueContainer" style="display: none;">
+                    <div align="center" style="height: 20px">Exclusive Queue</div>
+                    <div class="list-group exclusiveQueue" id="exclusiveQueue"></div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-12">
+                    <svg class="memory-svg" id="memSvg" style="display: none;">
+                    </svg>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-12">
+                    <svg class="resourceMonitor" id="resourceMonitor" style="display: none">
+                    </svg>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-12">
+                    <svg class="ganttSvg" id="gantt" style="display: none">
+                    </svg>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 25px">
+                <div class="col-md-12">
+                    <svg class="stats-svg" id="stats">
+                    </svg>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-md-12">
+                    <svg class="mem-stats-svg" id="memStats" style="display: none;">
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="bundle.js"></script>
+    <script>
+        let coll = document.getElementsByClassName("collapsible");
+        let i;
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                let content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+</body>
+</html>

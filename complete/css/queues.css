@@ -1,0 +1,37 @@
+.resourceQueueContainer{
+}
+
+.exclusiveQueueContainer{
+}
+
+.memoryQueue{
+    border: 1px solid #cccccc;
+    height: 480px;
+    width: 100%;
+    overflow: auto;
+}
+
+.exclusiveQueue{
+    border: 1px solid #cccccc;
+    height: 480px;
+    width: 100%;
+    overflow: auto;
+}
+
+.activeQueueItem{
+    border: 1px solid #7aff63;
+}
+
+.queue-list-item{
+    height: 85px;
+    padding: 0;
+    margin-right: 2%;
+    margin-left: 2%;
+}
+
+.queue-list-item-content{
+    padding: 10px 15px;
+    position: absolute;
+    float: left;
+    width: 100%;
+}

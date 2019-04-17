@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scheduling</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="scheduling.css">
+</head>
+<body>
+<!-- Nav Bar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-secondary btn-success" id="startSimulation">
+                            <span class="glyphicon glyphicon-play"></span> Run
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="pauseSimulation">
+                            <span class="glyphicon glyphicon-pause"></span> Pause
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-danger" id="stopSimulation">
+                            <span class="glyphicon glyphicon-stop"></span> Stop
+                        </button>
+                    </div>
+                </li>
+                <li>
+                    <label for="schedulingAlgorithm">Scheduling Algorithm &nbsp;</label>
+                    <select title="Scheduling Algorithm" id="schedulingAlgorithm">
+                        <option value="fifo">First in, first out</option>
+                        <option value="lifo">Last in, first out</option>
+                        <option value="rr">Round-robin</option>
+                        <option value="priority">Priority</option>
+                        <option value="sjn">Shortest job next</option>
+                    </select>
+                </li>
+                <li id="interruptCheckBoxContainer" style="display:none;">
+                    <input id="interruptCheckBox" type="checkbox" title="Should new processes interrupt running ones?"/>
+                    <label for="interruptCheckBox">&nbsp;Pre-emption&nbsp;/&nbsp;interruption</label>
+                </li>
+                <li id="rrQuantumContainer" style="display:none;">
+                    <label class="control-label" for="quantum">quantum:&nbsp;</label>
+                    <input type="number" class="form-control" id="quantum" value="2" min="1">
+                </li>
+                <li>
+                    <label for="animationSpeed">
+                        Animation&nbsp;speed&nbsp;
+                    </label>
+                    <input type="range" min="0" max="100" step="1" title="Animation speed" id="animationSpeed"/>
+                </li>
+                <li>
+                    <button type="button" class="btn" id="addRandomProcesses">
+                        <span class="glyphicon glyphicon-random"></span>&nbsp; Random Processes
+                    </button>
+                </li>
+                <li id="memoryAlgorithmContainer">
+                    <label for="memoryAlgorithm">Memory Algorithm &nbsp;</label>
+                    <select title="Memory Algorithm" id="memoryAlgorithm">
+                        <option value="FirstFit">First Fit</option>
+                        <option value="BestFit">Best Fit</option>
+                        <option value="Worst Fit">Worst Fit</option>
+                        <option value="Rotating First Fit">Rotating First Fit</option>
+                        <option value="Buddy System">Buddy System</option>
+                    </select>
+                </li>
+                <li id="buddyContainer" style="display: none;">
+                    <input type="checkbox" id="buddyOverstep"
+                           title="Can we ignore the memory constrains if it would result in a less extrem fragmentation?">
+                    <label for="buddyOverstep">&nbsp;Ignore memory size?</label>
+                    &nbsp;|&nbsp;
+                    <label for="buddyMinSize">Minimal block size:&nbsp;</label>
+                    <input type="number" class="form-control" id="buddyMinSize" min="1" value="1">
+                </li>
+                <li>
+                    <button type="button" class="btn" id="saveButton">
+                        <span class="glyphicon glyphicon-floppy-save"></span>&nbsp; Save Configuration
+                    </button>
+                </li>
+                <li>
+                    <label class="loadLabel" for="inputID">
+                        <button type="button" class="btn" id="loadButton">
+                            <span class="glyphicon glyphicon-floppy-open"></span>&nbsp; Load Configuration
+                            <input id="inputID" type="file" style="position: fixed; top: -100em" size="200">
+                        </button>
+                    </label>
+
+                </li>
+                <li id="diskAllocAlgorithmContainer">
+                    <label for="diskAllocAlgorithm">Disk Space Allocation Algorithm &nbsp;</label>
+                    <select title="Disk Space Allocation Algorithm" id="diskAllocAlgorithm">
+                        <option value="disk-space-first-fit">First Fit</option>
+                        <option value="disk-space-first-complete-fit">First Complete Fit</option>
+                    </select>
+                </li>
+                <li id="swappingStrategyContainer">
+                    <label for="swappingStrategy">Swapping Strategy&nbsp;</label>
+                    <select title="Swapping Strategy" id="swappingStrategy">
+                        <option value="first">First available process</option>
+                        <option value="last">Last available process</option>
+                        <option value="alternate-first-last">Alternate First and Last</option>
+                        <option value="lowest-priority">Lowest priority first</option>
+                    </select>
+                </li>
+                <li>
+                    <button type="button" class="btn" id="settingsButton">
+                        <span class="glyphicon glyphicon-cog"></span>&nbsp;Settings
+                    </button>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+    <div class="row" style="margin-top: 25px">
+        <div class="col-md-6 col-sm-6">
+            <div class="process-side">
+                <div class="fixed-top">
+                    <button type="button" class="btn btn-primary btn-block add-process-button" id="openProcessFormBtn" aria-label="Toggle Add Process form">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span class="glyphicon glyphicon-minus hidden" aria-hidden="true"></span>
+                    </button>
+                    <form class="form-horizontal process-form hidden" id="processForm">
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="arrival">Arrival:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="arrival" value="0" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="duration">Duration:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="duration" value="10" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="priority">Priority:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="priority" value="1" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="memoryUsage">Memory:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="memoryUsage" value="1" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="diskUsage">Disk:</label>
+                            <div class="col-sm-8">
+                                <input type="number" class="form-control" id="diskUsage" value="1" min="1" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-default">Add Process</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="process-list-container" id="processList">
+                    <div class="list-group" id="simulatedProcesses">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6">
+            <ul id="statsList">
+            </ul>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 25px">
+        <div class="col-md-12">
+            <svg class="memory-svg" id="memSvg">
+                <!-- memory ui handled in d3 -->
+            </svg>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 25px">
+        <div class="col-md-12" id="diskSpaceSvgContainer">
+            <svg class="memory-svg" id="diskSpaceSvg">
+                <!-- diskSpace ui handled in d3 -->
+            </svg>
+        </div>
+    </div>
+
+    <div class="row" style="margin-top: 25px">
+        <div class="col-md-12">
+            <svg class="stats-svg" id="stats">
+            </svg>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 25px;">
+        <div class="col-md-12">
+            <svg class="mem-stats-svg" id="memStats">
+            </svg>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 25px;">
+        <div class="col-md-12">
+            <svg class="stats-svg" id="diskStats"></svg>
+        </div>
+    </div>
+</div>
+<script src="main.bundle.js"></script>
+</body>
+</html>
